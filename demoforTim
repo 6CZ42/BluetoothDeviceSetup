@@ -6,6 +6,7 @@ BufferedSerial bt(D1, D0); // HC-05 module connected to pins D1 (TX) and D0 (RX)
 DigitalOut led(LED1); // LED connected to pin LED1
 PwmOut Buzzer(A0);
 DigitalIn btState(ARDUINO_UNO_D13);
+DigitalOut dcmotor(ARDUINO_UNO_D3);
 
 //RGB LED Class Syste
 //===========================================================================================
@@ -42,9 +43,11 @@ void siren(){
     int i;
     for (i = 0; i < 10; i = i + 2)
     {
+        dcmotor=1;
         Buzzer.period(1.0 / 969.0);
         Buzzer = float(i) / 50.0;
         ThisThread::sleep_for(500ms);
+        dcmotor=0;
         Buzzer.period(1.0 / 800.0);
         ThisThread::sleep_for(500ms);
     }
@@ -66,8 +69,8 @@ int main() {
          if(btState == 1) { // If the HC-05 is connected
             myRGBLED.write(0.0,1.0,0.0); // Set RGB LED to green
         }else{
-            myRGBLED.write(1.0,0.0,0.0); // Set RGB LED to red
-            siren();
+            //myRGBLED.write(1.0,0.0,0.0); // Set RGB LED to red
+            warning();
         }
         ThisThread::sleep_for(100ms); // Wait for 100 milliseconds before checking again
 
