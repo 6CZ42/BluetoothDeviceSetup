@@ -5,8 +5,9 @@ BufferedSerial pc(USBTX, USBRX); // Serial interface for debugging
 BufferedSerial bt(D1, D0); // HC-05 module connected to pins D1 (TX) and D0 (RX)
 DigitalOut led(LED1); // LED connected to pin LED1
 PwmOut Buzzer(A0);
+DigitalIn btState(ARDUINO_UNO_D13);
 
-//RGB LED Class System
+//RGB LED Class Syste
 //===========================================================================================
 class RGBLED
 {
@@ -39,7 +40,7 @@ RGBLED myRGBLED(D11,D10,D9); //RGB PWM pins
 
 void siren(){
     int i;
-    for (i = 0; i < 32; i = i + 2)
+    for (i = 0; i < 10; i = i + 2)
     {
         Buzzer.period(1.0 / 969.0);
         Buzzer = float(i) / 50.0;
@@ -61,13 +62,25 @@ int main() {
     led = 1; // Turn off the LED initially
     
     while(1) {
-        if(bt.readable() == 0) { // If the Bluetooth connection is lost
-        
-            warning();
-        }
-        else{
-            myRGBLED.write(0.0,1.0,0.0);
+
+         if(btState == 1) { // If the HC-05 is connected
+            myRGBLED.write(0.0,1.0,0.0); // Set RGB LED to green
+        }else{
+            myRGBLED.write(1.0,0.0,0.0); // Set RGB LED to red
+            siren();
         }
         ThisThread::sleep_for(100ms); // Wait for 100 milliseconds before checking again
+
+
+
+    //    if(bt.readable() == 0) { // If the Bluetooth connection is lost
+        
+    //        warning();
+        }
+    //    else{
+    //        myRGBLED.write(0.0,0.0,0.0);
+    //    }
+    //    ThisThread::sleep_for(100ms); // Wait for 100 milliseconds before checking again
+        
+
     }
-}
