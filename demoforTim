@@ -65,6 +65,9 @@ int main() {
         
             warning();
         }
+        else{
+            myRGBLED.write(0.0,1.0,0.0);
+        }
         ThisThread::sleep_for(100ms); // Wait for 100 milliseconds before checking again
     }
 }
