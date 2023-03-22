@@ -1,0 +1,74 @@
+#include "mbed.h"
+#include "stm32l476xx.h"
+#include "BufferedSerial.h"
+#include <string.h>
+
+DigitalOut RedLED(PA_7);
+DigitalOut GreenLED(PB_6);
+DigitalOut BlueLED(PC_7);
+AnalogIn HeartBeatSensor(PA_1);
+PwmOut Buzzer(PB_9);
+
+
+DigitalOut led(LED1);
+
+BufferedSerial serial(USBTX, USBRX);
+BufferedSerial bluetooth(ARDUINO_UNO_D1, ARDUINO_UNO_D0);
+
+
+
+
+void Siren(void)
+{
+    int i;
+    for (i = 0; i < 32; i = i + 2)
+    {
+        Buzzer.period(1.0 / 969.0);
+        Buzzer = float(i) / 50.0;
+        ThisThread::sleep_for(500ms);
+        Buzzer.period(1.0 / 800.0);
+        ThisThread::sleep_for(500ms);
+    }
+}
+
+int main()
+{
+    serial.set_baud(9600);
+    bluetooth.set_baud(9600);
+
+     
+
+    while (1)
+    {
+        //float value = HeartBeatSensor.read();
+
+        //char buf[32];
+        //sprintf(buf, "%.3f", value);
+        //bluetooth.write(buf, strlen(buf));
+
+        // led = !led;
+
+        //  ThisThread::sleep_for(1s);
+
+
+           
+        // read the analog value on PA1
+        float avalue = HeartBeatSensor.read();
+
+        // convert the analog value to a string
+        char buffer[20];
+        int len = snprintf(buffer, 20, "%f\r\n", avalue);
+
+        // transmit the string via the HC-05 Bluetooth module
+       bluetooth.write((uint8_t *)buffer, len);
+
+       led = !led;
+
+        // wait for 1 second
+        ThisThread::sleep_for(1s);
+    
+
+       
+    }
+
+}
