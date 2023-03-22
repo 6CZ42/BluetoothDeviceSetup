@@ -57,19 +57,19 @@
 
 
             
-            // read the analog value on PA1
+            
             float heartbeatsensorevalue = HeartBeatSensor.read();
 
-            // convert the analog value to a string
+           
             char buffer[20];
             int len = snprintf(buffer, 20, "%f\r\n", heartbeatsensorevalue);
 
-            // transmit the string via the HC-05 Bluetooth module
+            
         bluetooth.write((uint8_t *)buffer, len);
 
         led = !led;
 
-            // wait for 1 second
+        
             ThisThread::sleep_for(1s);
         
 
